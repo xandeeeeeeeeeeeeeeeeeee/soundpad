@@ -1,0 +1,12 @@
+import {mkdir,writeFile} from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..');
+await mkdir(path.join(root,'tools'),{recursive:true});
+console.log('Baixando yt-dlp do repositório oficial…');
+const response=await fetch('https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe');
+if(!response.ok) throw Error(`Download: ${response.status}`);
+await writeFile(path.join(root,'tools','yt-dlp.exe'),Buffer.from(await response.arrayBuffer()));
+console.log('Instalando FFmpeg localmente…');
+const result=spawnSync(process.platform==='win32'?'npm.cmd':'npm',['install','--no-save','--package-lock=false','ffmpeg-static'],{cwd:root,stdio:'inherit',env:{...process.env,npm_config_cache:path.join(root,'.npm-cache')},shell:process.platform==='win32'});
+process.exitCode=result.status??1;

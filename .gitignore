@@ -1,0 +1,9 @@
+data/
+tools/
+node_modules/
+.npm-cache/
+*.log
+build/
+release/
+*-preview.jpg
+preview.jpg
