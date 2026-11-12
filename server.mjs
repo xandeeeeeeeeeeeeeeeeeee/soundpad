@@ -23,7 +23,7 @@ export function createServer(){return http.createServer(async(req,res)=>{try{
  const url=new URL(req.url,'http://127.0.0.1:3210');
  if(url.pathname==='/api/catalog'&&req.method==='GET'){json(res,await searchCatalog(url.searchParams.get('q')||'rain',url.searchParams.get('source')||'all',url.searchParams.get('page')||1));return}
  if(url.pathname==='/api/catalog/import'&&req.method==='POST'){const input=JSON.parse((await body(req,4096)).toString());const {entry,bytes}=await downloadCatalog(input.id);const id=randomUUID(),ext=path.extname(new URL(entry.mediaUrl).pathname).toLowerCase();if(!['.wav','.mp3','.ogg','.oga','.flac'].includes(ext))throw Error('Formato indisponível');const original=path.join(audio,id+ext);await writeFile(original,bytes);let file=id+ext;try{await run(executable('ffmpeg'),['-nostdin','-y','-i',original,'-vn','-ac','2','-ar','44100',path.join(audio,id+'.converted.wav')]);file=id+'.converted.wav';await unlink(original)}catch{}json(res,{url:'/audio/'+file,entry});return}
- if(url.pathname==='/api/health'&&req.method==='GET'){json(res,{application:'soundpad',version:'1.0.0'});return}
+ if(url.pathname==='/api/health'&&req.method==='GET'){json(res,{application:'soundpad',version:'1.1.0'});return}
  if(url.pathname==='/api/status'){const check=async n=>{try{await run(executable(n),[n==='ffmpeg'?'-version':'--version'],5000);return true}catch{return false}};const [yt,ff]=await Promise.all([check('yt-dlp'),check('ffmpeg')]);json(res,{youtube:yt,ffmpeg:ff});return}
  if(url.pathname==='/api/setup'){
   if(req.method==='GET'){try{json(res,cleanSetup(JSON.parse(await readFile(path.join(data,'setup.json'),'utf8'))))}catch(e){if(e.code!=='ENOENT')throw e;json(res,null)}return}

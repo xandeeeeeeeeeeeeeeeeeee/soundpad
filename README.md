@@ -4,7 +4,7 @@ Aplicativo local para Windows, com áudio pré-carregado e mapeamento MIDI.
 
 ## Executável Windows
 
-Baixe **Soundpad-1.0.0-win-x64.exe** na seção Releases deste repositório. Execute o arquivo para abrir o aplicativo no navegador padrão. Recomenda-se Chrome ou Edge para MIDI. Requer Windows 10/11 de 64 bits; não precisa instalar Node.js, FFmpeg ou yt-dlp separadamente.
+Baixe **Soundpad-1.1.0-win-x64.exe** na seção Releases deste repositório. Execute o arquivo para abrir o aplicativo no navegador padrão. Recomenda-se Chrome ou Edge para MIDI. Requer Windows 10/11 de 64 bits; não precisa instalar Node.js, FFmpeg ou yt-dlp separadamente.
 
 O aplicativo fica na bandeja do Windows: use **Abrir Soundpad**, **Abrir pasta de dados** ou **Encerrar Soundpad**. Fechar a aba não encerra o servidor. Na primeira execução, o runtime é extraído em `%LOCALAPPDATA%/Soundpad/runtime/`. Áudios e configurações ficam em `%LOCALAPPDATA%/Soundpad/data/` e permanecem separados das versões do programa.
 
@@ -68,4 +68,14 @@ O servidor escuta apenas em `127.0.0.1:3210`. Todos os sons da biblioteca são d
 
 ## Compilar o executável
 
-No Windows x64, execute `npm run setup:media`, `npm test` e `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1`. O build usa o compilador .NET Framework do Windows e o Node.js instalado. Gera o executável e o SHA-256 em `release/`. `SOUNDPAD_HOME` permite usar uma pasta alternativa para runtime/dados; `Soundpad-1.0.0-win-x64.exe --self-test` testa o pacote sem abrir o navegador (encerre outras instâncias antes).
+No Windows x64, execute `npm run setup:media`, `npm test` e `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1`. O build usa o compilador .NET Framework do Windows e o Node.js instalado. Gera o executável e o SHA-256 em `release/`. `SOUNDPAD_HOME` permite usar uma pasta alternativa para runtime/dados; `Soundpad-1.1.0-win-x64.exe --self-test` testa o pacote sem abrir o navegador (encerre outras instâncias antes).
+
+## Mixer e controles MIDI
+
+- Em **Mixer**, crie ou renomeie canais de áudio e categorias. Cada um tem volume, mute, solo, panorama, filtro e tom/velocidade. Categorias podem participar do ducking. Itens em uso não podem ser removidos.
+- Em **Biblioteca → Editar som**, defina categoria, canal e ajustes do próprio som. O canal é um subgrupo de áudio interno, não uma saída física nem um canal MIDI.
+- Em **Configurar** abaixo de cada knob, escolha master, canal, categoria, som ou pad/tecla; depois volume, panorama, filtro, tom/velocidade ou mute. Ajuste mínimo, máximo, curva, inversão e modo absoluto/relativo. No SMK-25 use absoluto, salvo configuração diferente no hardware. Os bancos de knobs e pads são independentes.
+- Em **Controlador MIDI → Editar MIDI**, configure mensagem, número e canal MIDI (0 aceita todos). Para pads/teclas, este editor também permite substituir o canal de áudio do som. Aprender continua disponível.
+- Notas repetidas são ignoradas até a soltura, inclusive mensagens duplicadas como `note 62` duas vezes. CC usado como botão dispara só na transição de zero para um valor positivo. Movimentos contínuos de knobs continuam funcionando. Reconectar remove os listeners da conexão anterior.
+- Mapeamentos sobrepostos são sinalizados. Se dois pads/teclas usam a mesma mensagem, só o primeiro atribuído do banco ativo dispara; para tocar sons juntos, use uma cena. Soltar uma tecla encerra o modo hold mesmo após trocar de banco.
+- Ajustes de mixer afetam vozes em reprodução e ficam no setup/backup. Mudança de tom altera também velocidade e duração (não há time-stretch).

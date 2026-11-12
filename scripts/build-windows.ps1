@@ -16,10 +16,10 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $payload = Join-Path $projectRoot ('build/payload-' + [Guid]::NewGuid().ToString('N') + '.zip')
 [System.IO.Compression.ZipFile]::CreateFromDirectory($stage,$payload,[System.IO.Compression.CompressionLevel]::Optimal,$false)
 $framework = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319'
-$exe = Join-Path $output 'Soundpad-1.0.0-win-x64.exe'
+$exe = Join-Path $output 'Soundpad-1.1.0-win-x64.exe'
 & (Join-Path $framework 'csc.exe') /nologo /target:winexe /platform:x64 /optimize+ "/out:$exe" "/resource:$payload,Soundpad.payload.zip" "/reference:$(Join-Path $framework 'System.IO.Compression.dll')" "/reference:$(Join-Path $framework 'System.IO.Compression.FileSystem.dll')" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll (Join-Path $projectRoot 'desktop/Launcher.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar o executável.' }
 $hash = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant()
-[IO.File]::WriteAllText((Join-Path $output 'SHA256SUMS.txt'), "$hash  Soundpad-1.0.0-win-x64.exe`n")
+[IO.File]::WriteAllText((Join-Path $output 'SHA256SUMS.txt'), "$hash  Soundpad-1.1.0-win-x64.exe`n")
 Get-Item -LiteralPath $exe | Select-Object Name,Length
 Write-Output "SHA256: $hash"
